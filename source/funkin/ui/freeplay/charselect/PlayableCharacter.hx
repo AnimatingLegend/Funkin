@@ -41,8 +41,18 @@ class PlayableCharacter implements IRegistryEntry<PlayerData>
    */
   public function getName():String
   {
-    // TODO: Maybe add localization support?
-    return _data?.name ?? "Unknown";
+    /**
+     * Checking to see if `_data`, and `_data.name` is not `null` before returning it
+     * If either is `null`, it will return `"Unknown"`.
+     */
+    return (_data != null && _data.name != null) ? _data.name : "Unknown";
+
+    /**
+     * As for localized string support
+     * you could eventually map the string `"Unknown"` to the appropiate translation depending on the current language
+     * `getLocalizedString("unknown_name")` would return the translated value base on the current locale
+     */
+    return (_data != null && _data.name != null) ? _data.name : getLocalizedString("unknown_name");
   }
 
   /**
@@ -51,7 +61,7 @@ class PlayableCharacter implements IRegistryEntry<PlayerData>
    */
   public function getOwnedCharacterIds():Array<String>
   {
-    return _data?.ownedChars ?? [];
+    return (_data != null && _data.ownedChars != null) ? _data.ownedChars : [];
   }
 
   /**
@@ -60,7 +70,7 @@ class PlayableCharacter implements IRegistryEntry<PlayerData>
    */
   public function shouldShowUnownedChars():Bool
   {
-    return _data?.showUnownedChars ?? false;
+    return (_data != null && _data.showUnownedChars != null) ? _data.showUnownedChars : false;
   }
 
   public function shouldShowCharacter(id:String):Bool
@@ -81,23 +91,23 @@ class PlayableCharacter implements IRegistryEntry<PlayerData>
 
   public function getFreeplayStyleID():String
   {
-    return _data?.freeplayStyle ?? Constants.DEFAULT_FREEPLAY_STYLE;
+    return (_data != null && _data.freeplayStyle != null) ? _data.freeplayStyle : Constants.DEFAULT_FREEPLAY_STYLE;
   }
 
   public function getFreeplayDJData():Null<PlayerFreeplayDJData>
   {
-    return _data?.freeplayDJ;
+    return (_data != null) ? _data.freeplayDJ : null;
   }
 
   public function getFreeplayDJText(index:Int):String
   {
     // Silly little placeholder
-    return _data?.freeplayDJ?.getFreeplayDJText(index) ?? 'GET FREAKY ON A FRIDAY';
+    return (_data != null && _data.freeplayDJ != null) ? _data.freeplayDJ.getFreeplayDJText(index) : 'GET FREAKY ON A FRIDAY';
   }
 
   public function getCharSelectData():Null<PlayerCharSelectData>
   {
-    return _data?.charSelect;
+    return (_data != null) ? _data.charSelect : null;
   }
 
   /**
@@ -133,19 +143,33 @@ class PlayableCharacter implements IRegistryEntry<PlayerData>
     switch (rank)
     {
       case PERFECT_GOLD:
-        return _data?.results?.music?.PERFECT_GOLD ?? "resultsPERFECT";
+        return (_data != null
+          && _data.results != null
+          && _data.results.music != null
+          && _data.results.music.PERFECT_GOLD != null) ? _data.results.music.PERFECT_GOLD : "resultsPERFECT";
       case PERFECT:
-        return _data?.results?.music?.PERFECT ?? "resultsPERFECT";
+        return
+          (_data != null && _data.results != null && _data.results.music != null && _data.results.music.PERFECT != null) ? _data.results.music.PERFECT : "resultsPERFECT";
+
       case EXCELLENT:
-        return _data?.results?.music?.EXCELLENT ?? "resultsEXCELLENT";
+        return
+          (_data != null && _data.results != null && _data.results.music != null && _data.results.music.EXCELLENT != null) ? _data.results.music.EXCELLENT : "resultsEXCELLENT";
+
       case GREAT:
-        return _data?.results?.music?.GREAT ?? "resultsNORMAL";
+        return
+          (_data != null && _data.results != null && _data.results.music != null && _data.results.music.GREAT != null) ? _data.results.music.GREAT : "resultsNORMAL";
+
       case GOOD:
-        return _data?.results?.music?.GOOD ?? "resultsNORMAL";
+        return
+          (_data != null && _data.results != null && _data.results.music != null && _data.results.music.GREAT != null) ? _data.results.music.GREAT : "resultsNORMAL";
+
       case SHIT:
-        return _data?.results?.music?.SHIT ?? "resultsSHIT";
+        return
+          (_data != null && _data.results != null && _data.results.music != null && _data.results.music.SHIT != null) ? _data.results.music.SHIT : "resultsSHIT";
+
       default:
-        return _data?.results?.music?.GOOD ?? "resultsNORMAL";
+        return
+          (_data != null && _data.results != null && _data.results.music != null && _data.results.music.GOOD != null) ? _data.results.music.GOOD : "resultsNORMAL";
     }
   }
 
@@ -154,7 +178,7 @@ class PlayableCharacter implements IRegistryEntry<PlayerData>
    */
   public function isUnlocked():Bool
   {
-    return _data?.unlocked ?? true;
+    return (_data != null && _data.unlocked != null) ? _data.unlocked : true;
   }
 
   /**
