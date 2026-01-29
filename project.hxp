@@ -2191,7 +2191,7 @@ class Project extends HXProject
   {
     var path = getLibraryCurrentFile(libraryName);
 
-    if (sys.FileSystem.exists(path)) return sys.io.File.getContent(path);
+    if (sys.FileSystem.exists(path)) return sys.io.File.getContent(path).trim();
 
     return '';
   }
@@ -2200,7 +2200,7 @@ class Project extends HXProject
   {
     var path = getLibraryDevFile(libraryName);
 
-    if (sys.FileSystem.exists(path)) return sys.io.File.getContent(path);
+    if (sys.FileSystem.exists(path)) return sys.io.File.getContent(path).trim();
 
     return '';
   }
