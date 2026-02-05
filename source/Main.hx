@@ -187,6 +187,19 @@ class Main extends Sprite
     #else
     trace('hxcpp_debug_server is disabled! This build does not support debugging.');
     #end
+
+    /**
+     * FIX: Force-kill the game and dispose of resources on exit.
+     * This prevents the 'ghost process' issue where the game continues running in the background.
+     */
+    lime.app.Application.current.onExit.add(function(exitEvent:Int) {
+      #if hxvlc
+      // Kill HXVLC Threads and free resources.
+      Handle.dispose();
+      #end
+
+      System.exit(exitEvent);
+    });
   }
 
   #if FEATURE_HAXEUI
