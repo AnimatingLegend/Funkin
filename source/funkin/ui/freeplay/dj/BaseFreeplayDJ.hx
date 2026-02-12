@@ -208,11 +208,32 @@ class BaseFreeplayDJ extends FunkinSprite implements IFreeplayScriptedClass
     if (animPrefix != null) playFlashAnimation(animPrefix, true, false, false, playableCharData?.getFistPumpLoopBadStartFrame());
   }
 
+  public function resetPosition():Void
+  {
+    if (playableCharData == null) return;
+
+    if (playableCharData.useAnimatePosition)
+    {
+      this.x = (FreeplayState.CUTOUT_WIDTH * FreeplayState.DJ_POS_MULTI);
+      this.y = 0;
+    }
+    else
+    {
+      this.x = (FreeplayState.CUTOUT_WIDTH * FreeplayState.DJ_POS_MULTI) + 640;
+      this.y = 366;
+    }
+  }
+
   function applyAnimationOffset():Void
   {
+    if (playableCharData == null) return;
+
     var animationName:String = getCurrentAnimation();
-    var animationOffsets:Null<Array<Float>> = playableCharData?.getAnimationOffsetsByPrefix(animationName);
+    var animationOffsets:Null<Array<Float>> = playableCharData.getAnimationOffsetsByPrefix(animationName);
     var globalOffsets:Array<Float> = [this.x, this.y];
+
+    globalOffsets[0] -= playableCharData.getGlobalOffsets()[0];
+    globalOffsets[1] -= playableCharData.getGlobalOffsets()[1];
 
     if (animationOffsets != null)
     {
