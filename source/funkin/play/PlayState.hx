@@ -768,8 +768,6 @@ class PlayState extends MusicBeatSubState
     previousCameraFollowPoint = params.cameraFollowPoint;
     mirrorSongData = params.mirrored ?? false;
 
-    trace("Params: " + mirrorSongData + ", " + isBotPlayMode);
-
     // Basic object initialization
 
     // TODO: Add something to toggle this on!
@@ -2625,7 +2623,6 @@ class PlayState extends MusicBeatSubState
 
     if (vocals != null)
     {
-      trace('Playing vocals...');
       add(vocals);
 
       vocals.time = startTimestamp - Conductor.instance.instrumentalOffset;
