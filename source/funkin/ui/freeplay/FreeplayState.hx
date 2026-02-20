@@ -2783,8 +2783,7 @@ class FreeplayState extends MusicBeatSubState
             minimalMode: false,
 
             #if FEATURE_DEBUG_FUNCTIONS
-            botPlayMode: FlxG.keys.pressed.SHIFT,
-            mirrored: FlxG.keys.pressed.CONTROL,
+            botPlayMode: FlxG.keys.pressed.SHIFT, mirrored: FlxG.keys.pressed.CONTROL,
             #else
             botPlayMode: false,
             #end
@@ -2855,6 +2854,8 @@ class FreeplayState extends MusicBeatSubState
 
   function changeSelection(change:Int = 0):Void
   {
+    clearPreviews();
+
     var prevSelected:Int = curSelected;
 
     curSelected += change;
@@ -2915,20 +2916,17 @@ class FreeplayState extends MusicBeatSubState
 
     if (grpCapsules.countLiving() > 0 && !prepForNewRank && uiStateMachine.canInteract())
     {
-      FlxG.sound.music?.pause();
-      FlxTimer.wait(FADE_IN_DELAY, playCurSongPreview.bind(currentCapsule));
-      currentCapsule.selected = true;
+      // Create a timer to delay the song preview to prevent overlapping or cutting out.
+      var timer = new FlxTimer().start(FADE_IN_DELAY, function(tmr:FlxTimer) {
+        if (FlxG.sound.music != null) FlxG.sound.music.stop();
+        playCurSongPreview();
+      });
 
-      // switchBackingImage(currentCapsule.freeplayData);
+      previewTimers.push(timer);
     }
 
-    // Clear song previews and add small vibrations every selection change.
-    if (change != 0)
-    {
-      clearPreviews();
-      HapticUtil.vibrate(0, 0.01, 0.5);
-    }
-		
+    if (change != 0) HapticUtil.vibrate(0, 0.01, 0.5);
+
     dispatchEvent(new CapsuleScriptEvent(CAPSULE_SELECTED, currentCapsule, currentDifficulty, currentVariation));
   }
 
