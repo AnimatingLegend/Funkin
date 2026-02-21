@@ -2871,8 +2871,6 @@ class FreeplayState extends MusicBeatSubState
 
   function changeSelection(change:Int = 0):Void
   {
-    clearPreviews();
-
     var prevSelected:Int = curSelected;
 
     curSelected += change;
@@ -2933,10 +2931,12 @@ class FreeplayState extends MusicBeatSubState
 
     if (grpCapsules.countLiving() > 0 && !prepForNewRank && uiStateMachine.canInteract())
     {
+      clearPreviews();
+
       // Create a timer to delay the song preview to prevent overlapping or cutting out.
       var timer = new FlxTimer().start(FADE_IN_DELAY, function(tmr:FlxTimer) {
         if (FlxG.sound.music != null) FlxG.sound.music.stop();
-        playCurSongPreview();
+        playCurSongPreview(currentCapsule);
       });
 
       previewTimers.push(timer);
