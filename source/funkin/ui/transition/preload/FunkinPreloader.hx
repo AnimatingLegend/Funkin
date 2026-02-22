@@ -52,6 +52,9 @@ class FunkinPreloader extends FlxBasePreloader
   // Ratio between window size and BASE_WIDTH
   var ratio:Float = 0;
 
+  // The target scale of `touchHereToPlay` sprite.
+  var targetScale:Float = 0;
+
   var currentState:FunkinPreloaderState = FunkinPreloaderState.NotStarted;
 
   // private var downloadingAssetsStartTime:Float = -1;
@@ -248,6 +251,8 @@ class FunkinPreloader extends FlxBasePreloader
     vfdBitmap.shader = vfdShader;
 
     #if FEATURE_TOUCH_HERE_TO_PLAY
+    targetScale = ratio * 0.5;
+
     touchHereToPlay = createBitmap(TouchHereToPlayImage, function(bmp:Bitmap)
     {
       // Scale and center the touch to start image.
@@ -803,20 +808,13 @@ class FunkinPreloader extends FlxBasePreloader
   }
 
   #if FEATURE_TOUCH_HERE_TO_PLAY
-  function overTouchHereToPlay(e:MouseEvent):Void
-  {
-    scaleAndCenter(touchHereToPlay, ratio * 1.1 * 0.5);
-  }
-
-  function outTouchHereToPlay(e:MouseEvent):Void
-  {
-    scaleAndCenter(touchHereToPlay, ratio * 0.5);
-  }
-
-  function mouseDownTouchHereToPlay(e:MouseEvent):Void
-  {
-    touchHereToPlay.y += 10;
-  }
+  /**
+   * These functions are left blank intentionally.
+   * @see #updateGraphics
+   */
+  function overTouchHereToPlay(e:MouseEvent):Void { }
+  function outTouchHereToPlay(e:MouseEvent):Void { }
+  function mouseDownTouchHereToPlay(e:MouseEvent):Void { }
 
   function onTouchHereToPlay(e:MouseEvent):Void
   {
@@ -885,6 +883,21 @@ class FunkinPreloader extends FlxBasePreloader
     {
       trace(' PRELOADER '.bold().bg_note_left() + ' $currentState ($percentage%, $elapsed sec)');
     }
+
+    // Scale the `touchHereToPlay` sprite.
+    #if FEATURE_TOUCH_HERE_TO_PLAY
+    if (currentState == FunkinPreloaderState.TouchHereToPlay)
+    {
+      var targetScale:Float = ratio * 0.5;
+
+      // If the mouse is over `touchHereToPlay` sprite, scale it up a bit.
+      if (touchHereSprite.hitTestPoint(mouseX, mouseY)) targetScale = ratio * 0.55;
+
+      // Lerp the sprites current scale to the targets scale.
+      var lerpValue:Float = touchHereToPlay.scaleX + (targetScale - touchHereToPlay.scaleX) * 0.2;
+      scaleAndCenter(touchHereToPlay, lerpValue);
+    }
+    #end
 
     super.update(percent);
   }
