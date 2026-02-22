@@ -52,9 +52,6 @@ class FunkinPreloader extends FlxBasePreloader
   // Ratio between window size and BASE_WIDTH
   var ratio:Float = 0;
 
-  // The target scale of `touchHereToPlay` sprite.
-  var targetScale:Float = 0;
-
   var currentState:FunkinPreloaderState = FunkinPreloaderState.NotStarted;
 
   // private var downloadingAssetsStartTime:Float = -1;
@@ -251,8 +248,6 @@ class FunkinPreloader extends FlxBasePreloader
     vfdBitmap.shader = vfdShader;
 
     #if FEATURE_TOUCH_HERE_TO_PLAY
-    targetScale = ratio * 0.5;
-
     touchHereToPlay = createBitmap(TouchHereToPlayImage, function(bmp:Bitmap)
     {
       // Scale and center the touch to start image.
