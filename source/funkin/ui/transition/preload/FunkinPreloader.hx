@@ -52,6 +52,11 @@ class FunkinPreloader extends FlxBasePreloader
   // Ratio between window size and BASE_WIDTH
   var ratio:Float = 0;
 
+  /**
+   * Check whether or not the `touchHereToPlay` sprite has been pressed.
+   */
+  var _isPressed:Bool = false;
+
   var currentState:FunkinPreloaderState = FunkinPreloaderState.NotStarted;
 
   // private var downloadingAssetsStartTime:Float = -1;
@@ -809,7 +814,18 @@ class FunkinPreloader extends FlxBasePreloader
    */
   function overTouchHereToPlay(e:MouseEvent):Void { }
   function outTouchHereToPlay(e:MouseEvent):Void { }
-  function mouseDownTouchHereToPlay(e:MouseEvent):Void { }
+
+  function mouseDownTouchHereToPlay(e:MouseEvent):Void
+  {
+    _isPressed = true;
+
+    haxe.Timer.delay(function() {
+      _isPressed = false;
+
+      // After a short delay, start the game
+      haxe.Timer.delay(immediatelyStartGame, 550);
+    }, 100);
+  }
 
   function onTouchHereToPlay(e:MouseEvent):Void
   {
@@ -819,9 +835,6 @@ class FunkinPreloader extends FlxBasePreloader
     touchHereSprite.removeEventListener(MouseEvent.MOUSE_OVER, overTouchHereToPlay);
     touchHereSprite.removeEventListener(MouseEvent.MOUSE_OUT, outTouchHereToPlay);
     touchHereSprite.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDownTouchHereToPlay);
-
-    // This is the actual thing that makes the game load.
-    immediatelyStartGame();
   }
 
   function scaleAndCenter(bmp:Bitmap, scale:Float)
@@ -885,11 +898,14 @@ class FunkinPreloader extends FlxBasePreloader
     {
       var targetScale:Float = ratio * 0.5;
 
-      // If the mouse is over `touchHereToPlay` sprite, scale it up a bit.
-      if (touchHereSprite.hitTestPoint(mouseX, mouseY)) targetScale = ratio * 0.55;
+      // Scale it down slighty if the mouse is pressed, otherwise scale it up a bit.
+      if (touchHereSprite.hitTestPoint(mouseX, mouseY))
+      {
+        targetScale = _isPressed ? ratio * 0.45 : ratio * 0.55;
+      }
 
       // Lerp the sprites current scale to the targets scale.
-      var lerpValue:Float = touchHereToPlay.scaleX + (targetScale - touchHereToPlay.scaleX) * 0.2;
+      var lerpValue:Float = touchHereToPlay.scaleX + (targetScale - touchHereToPlay.scaleX) * 0.15;
       scaleAndCenter(touchHereToPlay, lerpValue);
     }
     #end
