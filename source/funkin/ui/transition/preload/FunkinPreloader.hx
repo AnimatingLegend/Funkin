@@ -819,10 +819,11 @@ class FunkinPreloader extends FlxBasePreloader
   {
     _isPressed = true;
 
+    // Wait 100ms for the `touchHereToPlay` sprite to return to its original scale.
+    // Start the game immediately after (wait another 550ms).
     haxe.Timer.delay(function() {
-      _isPressed = false;
+      _isPressed = false; // Reset to prevent double-clicking.
 
-      // After a short delay, start the game
       haxe.Timer.delay(immediatelyStartGame, 550);
     }, 100);
   }
@@ -898,9 +899,9 @@ class FunkinPreloader extends FlxBasePreloader
     {
       var targetScale:Float = ratio * 0.5;
 
-      // Scale it down slighty if the mouse is pressed, otherwise scale it up a bit.
       if (touchHereSprite.hitTestPoint(mouseX, mouseY))
       {
+        // Scale the sprite down slighty if the mouse is pressed, otherwise scale it up a bit.
         targetScale = _isPressed ? ratio * 0.45 : ratio * 0.55;
       }
 
