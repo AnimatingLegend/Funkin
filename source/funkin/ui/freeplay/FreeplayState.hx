@@ -2797,7 +2797,8 @@ class FreeplayState extends MusicBeatSubState
           minimalMode: false,
 
           #if FEATURE_DEBUG_FUNCTIONS
-          botPlayMode: FlxG.keys.pressed.SHIFT, mirrored: FlxG.keys.pressed.CONTROL,
+          botPlayMode: FlxG.keys.pressed.SHIFT,
+          mirrored: FlxG.keys.pressed.CONTROL,
           #else
           botPlayMode: false,
           #end
@@ -2930,11 +2931,15 @@ class FreeplayState extends MusicBeatSubState
 
     if (grpCapsules.countLiving() > 0 && !prepForNewRank && uiStateMachine.canInteract())
     {
-      FlxG.sound.music?.pause();
-      FlxTimer.wait(FADE_IN_DELAY, playCurSongPreview.bind(currentCapsule));
-      currentCapsule.selected = true;
+      clearPreviews();
 
-      // switchBackingImage(currentCapsule.freeplayData);
+      // Create a timer to delay the song preview to prevent overlapping or cutting out.
+      var timer = new FlxTimer().start(FADE_IN_DELAY, function(tmr:FlxTimer) {
+        if (FlxG.sound.music != null) FlxG.sound.music.stop();
+        playCurSongPreview(currentCapsule);
+      });
+
+      previewTimers.push(timer);
     }
 
     // Small vibrations every selection change.
@@ -3000,18 +3005,36 @@ class FreeplayState extends MusicBeatSubState
         },
         onLoad: function()
         {
+          #if html5
+          // HTML5 uses the full-song length for partial loads. 14 seconds provides a good 20% fade window.
+          // FALLBACK: If preview length is 0, default to 15 seconds. to prevent overlapping.
+          // NOTE: Since songs on web aren't pre-loaded, the song may take about 2 - 3 seconds to fade back in after the fade-out.
+          var fadeStart:Float = 11;
+          var loopEnd:Float = (FlxG.sound.music.length > 0) ? 14 : 15;
+          var fadeDuration:Float = 2;
+          #else
+          // Use a longer fade duration for a smoother desktop transition.
+          var fadeDuration:Float = 4;
+          var loopEnd:Float = FlxG.sound.music.length / 1000;
+          var fadeStart:Float = Math.max(0, loopEnd - fadeDuration);
+          #end
+
+          FlxG.sound.music.volume = 0;
           FlxG.sound.music.fadeIn(2, 0, previewVolume);
 
-          var fadeStart:Float = (FlxG.sound.music.length / 1000) - 2;
+          clearPreviews();
 
           previewTimers.push(new FlxTimer().start(fadeStart, function(_)
           {
-            FlxG.sound.music.fadeOut(2, 0);
+            if (FlxG.sound.music != null && daSongCapsule.selected)
+            {
+              FlxG.sound.music.fadeOut(fadeDuration, 0);
+            }
           }));
 
-          previewTimers.push(new FlxTimer().start(FlxG.sound.music.length / 1000, function(_)
+          previewTimers.push(new FlxTimer().start(loopEnd, function(_)
           {
-            playCurSongPreview();
+            if (daSongCapsule.selected) playCurSongPreview(daSongCapsule);
           }));
         },
       });
