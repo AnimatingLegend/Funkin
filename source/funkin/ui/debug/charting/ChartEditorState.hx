@@ -5176,7 +5176,6 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
         {
           if (dragLengthCurrent != dragLengthSteps)
           {
-            stretchySounds = !stretchySounds;
             this.playStretchySound();
 
             dragLengthCurrent = dragLengthSteps;
@@ -5854,7 +5853,6 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
 
         if (playheadDragLengthCurrent[column] != targetNoteLengthStepsInt)
         {
-          stretchySounds = !stretchySounds;
           this.playStretchySound();
           playheadDragLengthCurrent[column] = targetNoteLengthStepsInt;
         }
