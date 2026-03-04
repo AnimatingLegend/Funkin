@@ -3597,7 +3597,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
         displayAutosavePopup = false;
         var absoluteBackupsPath:String = Path.join([Sys.getCwd(), ChartEditorImportExportHandler.BACKUPS_PATH]);
         this.infoWithActions('Auto-Save', 'Chart auto-saved to ${absoluteBackupsPath}.', [{
-          text: "Take Me There",
+          text: "Open In Folder",
           callback: openBackupsFolder,
         }]);
       }
@@ -6929,7 +6929,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
       {
         var absoluteBackupsPath:String = Path.join([Sys.getCwd(), ChartEditorImportExportHandler.BACKUPS_PATH]);
         this.infoWithActions('Auto-Save', 'Chart auto-saved to ${absoluteBackupsPath}.', [{
-          text: "Take Me There",
+          text: "Open In Folder",
           callback: openBackupsFolder,
         }]);
       });
