@@ -531,29 +531,37 @@ class BaseCharacter extends Bopper
 
     if (event.note.noteData.getMustHitNote() && characterType == BF)
     {
-      if (curNoteKind != null)
+      if (curNoteKind != null && curNoteKind.noanim)
       {
-        if (!curNoteKind.noanim)
-        {
-          this.playSingAnimation(event.note.noteData.getDirection(), false, curNoteKind?.suffix);
-          holdTimer = 0;
-        }
+        // Force the timer to skip the sing duration to clear any previous poses.
+        holdTimer = 100;
+
+        // Check if character is currently in a 'hold' state and skip it for smoother transitions.
+        var currentAnimation = getCurrentAnimation();
+        if (currentAnimation.endsWith(Constants.ANIMATION_HOLD_SUFFIX)) currentAnimation = currentAnimation.substring(0, currentAnimation.length - Constants.ANIMATION_HOLD_SUFFIX.length);
+
+        // Attempt to play the designated 'end' animation for a smoother transition back to idle.
+        var endAnimation = currentAnimation + Constants.ANIMATION_END_SUFFIX;
+        if (hasAnimation(endAnimation)) playAnimation(endAnimation);
       }
       else
       {
-        this.playSingAnimation(event.note.noteData.getDirection(), false);
         holdTimer = 0;
+        this.playSingAnimation(event.note.noteData.getDirection(), false);
       }
     }
     else if (!event.note.noteData.getMustHitNote() && characterType == DAD)
     {
-      if (curNoteKind != null)
+      if (curNoteKind != null && curNoteKind.noanim)
       {
-        if (!curNoteKind.noanim)
-        {
-          this.playSingAnimation(event.note.noteData.getDirection(), false, curNoteKind?.suffix);
-          holdTimer = 0;
-        }
+        // Apply the same logic for DAD
+        holdTimer = 100;
+
+        var currentAnimation = getCurrentAnimation();
+        if (currentAnimation.endsWith(Constants.ANIMATION_HOLD_SUFFIX)) currentAnimation = currentAnimation.substring(0, currentAnimation.length - Constants.ANIMATION_HOLD_SUFFIX.length);
+
+        var endAnimation = currentAnimation + Constants.ANIMATION_END_SUFFIX;
+        if (hasAnimation(endAnimation)) playAnimation(endAnimation);
       }
       else
       {
@@ -588,6 +596,7 @@ class BaseCharacter extends Bopper
     {
       // If the note is from the same strumline, play the miss animation.
       this.playSingAnimation(event.note.noteData.getDirection(), true);
+      this.holdTimer = 0;
     }
     else if (!event.note.noteData.getMustHitNote() && characterType == DAD)
     {
@@ -606,6 +615,10 @@ class BaseCharacter extends Bopper
 
     // If another script cancelled the event, don't do anything.
     if (event.eventCanceled) return;
+
+    // Check if note-hold's have a no-animation note kind.
+    curNoteKind = NoteKindManager.getNoteKind(event.holdNote.noteData.kind);
+    if (curNoteKind != null && curNoteKind.noanim) return;
 
     if (event.holdNote.noteData.getMustHitNote() && characterType == BF)
     {
