@@ -3931,7 +3931,7 @@ class PlayState extends MusicBeatSubState
       @:nullSafety(Off)
       FlxG.camera.target = null;
 
-      var adjustedDuration:Float = duration * playbackRate;
+      var adjustedDuration:Float = duration / playbackRate;
 
       // Follow tween! Caching it so we can cancel/pause it later if needed.
       var followPos:FlxPoint = cameraFollowPoint.getPosition() - FlxPoint.weak(FlxG.camera.width * 0.5, FlxG.camera.height * 0.5);
@@ -3973,7 +3973,7 @@ class PlayState extends MusicBeatSubState
     else
     {
       // Zoom tween! Caching it so we can cancel/pause it later if needed.
-      var adjustedDuration:Float = duration * playbackRate;
+      var adjustedDuration:Float = duration / playbackRate;
       cameraZoomTween = FlxTween.tween(this, {currentCameraZoom: targetZoom}, adjustedDuration, {ease: ease});
     }
   }
@@ -4027,7 +4027,7 @@ class PlayState extends MusicBeatSubState
       }
       else
       {
-        var adjustedDuration:Float = duration * playbackRate;
+        var adjustedDuration:Float = duration / playbackRate;
 
         scrollSpeedTweens.push(FlxTween.tween(strum, {
           'scrollSpeed': value
