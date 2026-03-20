@@ -134,18 +134,28 @@ class SongEventRegistry
     }
   }
 
-  private static var nextEventIndex:Int = -1;
+  /**
+   * Caching the index for the next event to query greatly reduces lag.
+   * Kinda nasty that it's tied to a static class though.
+   */
+  static var nextEventIndex:Int = -1;
 
   /**
+   * Retrieve the list of events to activate this frame.
+   *
    * @param events The list of available song events.
    * @param currentTime The current time in milliseconds.
+   * @param startIndex The index to start querying from.
+   *   Defaults to the index of the last event handled.
    * @return The list of events which haven't been handled yet.
    */
-  public static function queryEvents(events:Array<SongEventData>, currentTime:Float):Array<SongEventData>
+  public static function queryEvents(events:Array<SongEventData>, currentTime:Float, ?startIndex:Int):Array<SongEventData>
   {
+    startIndex ??= nextEventIndex;
+
     var result:Array<SongEventData> = [];
 
-    for (i in nextEventIndex...events.length)
+    for (i in startIndex...events.length)
     {
       if (events[i].activated) continue;
 
@@ -190,7 +200,7 @@ class SongEventRegistry
   public static function resetEvents(events:Array<SongEventData>):Void
   {
     events.sort(SortUtil.eventDataByTime.bind(FlxSort.ASCENDING));
-    nextEventIndex = 0;
+    nextEventIndex = -1;
     allEventHandlers.resize(0);
 
     for (event in events)
@@ -202,7 +212,7 @@ class SongEventRegistry
     }
   }
 
-  private static var allEventHandlers:Array<SongEvent> = [];
+  static var allEventHandlers:Array<SongEvent> = [];
 
   public static inline function callEvent(scriptEvent:ScriptEvent):Void
   {
