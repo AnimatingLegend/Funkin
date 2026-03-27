@@ -581,6 +581,12 @@ class PlayState extends MusicBeatSubState
   public var iconP2:Null<HealthIcon>;
 
   /**
+   * Whether the player's old icon is currently active.
+   * Persisted across song restarts.
+   */
+  public var isOldIconActive:Bool = false;
+
+  /**
    * The sprite group containing active player's strumline notes.
    */
   public var playerStrumline:Strumline;
@@ -1137,6 +1143,9 @@ class PlayState extends MusicBeatSubState
       // Reset the health icons.
       currentStage?.getBoyfriend()?.initHealthIcon(false);
       currentStage?.getDad()?.initHealthIcon(true);
+
+      // Restore the old icon state if the user pressed 9 previously.
+      if (isOldIconActive && iconP1 != null) iconP1.toggleOldIcon();
 
       needsReset = false;
     }
@@ -3267,7 +3276,11 @@ class PlayState extends MusicBeatSubState
 
     // 9: Toggle the old icon.
     if ((FlxG.keys.justPressed.NINE #if FEATURE_TOUCH_CONTROLS || (TouchUtil.justPressed && TouchUtil.overlapsComplex(iconP1)) #end)
-      && iconP1 != null) iconP1.toggleOldIcon();
+      && iconP1 != null)
+    {
+      iconP1.toggleOldIcon();
+      isOldIconActive = !isOldIconActive;
+    }
 
     final isDebug:Bool = #if FEATURE_DEBUG_FUNCTIONS true #else false #end;
     if (isChartingMode || isDebug)
