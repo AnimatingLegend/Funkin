@@ -2,14 +2,14 @@
 	"lineEnds": {
 		"leftCurly": "both",
 		"rightCurly": "both",
-		"objectLiteralCurly": {
-			"leftCurly": "after"
-		}
+		"emptyCurly": "break",
+		"objectLiteralCurly": { "leftCurly": "after" }
 	},
 	"sameLine": {
 		"ifElse": "next",
 		"doWhile": "next",
 		"tryBody": "next",
 		"tryCatch": "next"
-	}
+	},
+	"excludes": [".haxelib", ".git"]
 }
