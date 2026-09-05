@@ -622,6 +622,8 @@ class Project extends HXProject
 
     displayTarget();
 
+    configureFeatureFlags();
+
     configureApp();
 
     configureOutputDir();
@@ -632,7 +634,6 @@ class Project extends HXProject
       return;
     }
 
-    configureFeatureFlags();
     configureCompileDefines();
     configureIncludeMacros();
     configureCustomMacros();
@@ -1080,6 +1081,12 @@ class Project extends HXProject
     // Turns the debug display off if you are on a non debug mobile build
     // Desktop (Native and Web) always has it | Used for mobile debugging purposes
     FEATURE_DEBUG_DISPLAY.apply(this, !isMobile() || FEATURE_DEBUG_FUNCTIONS.isEnabled(this));
+
+    if (isRun() || isInstall())
+    {
+      // These commands dont really need much in order to run so to improve the speed, we return here.
+      return;
+    }
 
     renderFlagsTable();
   }
