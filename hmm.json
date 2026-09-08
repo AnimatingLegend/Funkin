@@ -15,13 +15,13 @@
     {
       "name": "extension-admob",
       "type": "git",
-      "ref": "68fc73c4090c5765709597b68fbe87389f3548c0",
+      "ref": "c3fea546634c0e799195e6c45d1666e1683ee59d",
       "url": "https://github.com/FunkinCrew/extension-admob"
     },
     {
       "name": "extension-agesignals",
       "type": "git",
-      "ref": "dd3f56ccbb313a43d40cba8826fca2b1ec7c7e5d",
+      "ref": "26a95f90c39db95d9fab59244f22e612b2295957",
       "url": "https://github.com/FunkinCrew/extension-agesignals"
     },
     {
@@ -43,7 +43,7 @@
     {
       "name": "extension-iapcore",
       "type": "git",
-      "ref": "5fbb4a8e56ff0f4d8ffc71b561d57a367419ead8",
+      "ref": "fd22c391be8bb59ded6c0b3f5fcc5f6358dd8897",
       "url": "https://github.com/LimeExtensions/extension-iapcore"
     },
     {
@@ -55,7 +55,7 @@
     {
       "name": "extension-webviewcore",
       "type": "git",
-      "ref": "98c059722491b182ee932ff47c5d7b564c967165",
+      "ref": "82f84ca88261dbdeca9a5276c594dac5209886ca",
       "url": "https://github.com/LimeExtensions/extension-webviewcore"
     },
     {
