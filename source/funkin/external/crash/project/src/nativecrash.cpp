@@ -35,7 +35,6 @@
 
 #define NC_LOGDIR_MAX 512
 #define NC_NAME_MAX 128
-#define NC_CONTEXT_MAX 1024
 #define NC_PATH_MAX 1024
 #define NC_FRAMES 64
 #define NC_DIALOG_FRAMES 6
@@ -43,8 +42,6 @@
 
 static char gLogDir[NC_LOGDIR_MAX] = "logs";
 static char gAppName[NC_NAME_MAX] = "Funkin";
-static char gContext[NC_CONTEXT_MAX] = "(nothing recorded)";
-static time_t gContextTime = 0;
 static char gReportPath[NC_PATH_MAX] = "";
 
 static bool gInstalled = false;
@@ -184,10 +181,6 @@ static void nc_writeHeader(FILE *file, const char *kind, const char *detail)
 	fprintf(file, "Thread: %p\n", (void *)pthread_self());
 #endif
 
-	fprintf(file, "\n=====================\n\n");
-	fprintf(file, "Doing: %s\n", gContext);
-
-	if (gContextTime != 0) fprintf(file, "Recorded: %ld seconds before the fault\n", (long)(now - gContextTime));
 	fprintf(file, "\n=====================\n\n");
 	fprintf(file, "Stack:\n");
 }
@@ -384,9 +377,9 @@ static void nc_report(const char *kind, const char *detail, CONTEXT *context)
 	char summary[NC_SUMMARY_MAX];
 	nc_haxeStackSummary(summary, sizeof(summary));
 
-	char body[NC_CONTEXT_MAX + NC_PATH_MAX + NC_SUMMARY_MAX + 512];
-	snprintf(body, sizeof(body), "%s\n\n%s\n\nDoing: %s\n\nHaxe stack:\n%s\nA report was written to:\n%s", kind, detail != NULL ? detail : "",
-			 gContext, summary[0] != 0 ? summary : "(unavailable)\n", file != NULL ? gReportPath : "(the report could not be written)");
+	char body[NC_PATH_MAX + NC_SUMMARY_MAX + 512];
+	snprintf(body, sizeof(body), "%s\n\n%s\n\nHaxe stack:\n%s\nA report was written to:\n%s", kind, detail != NULL ? detail : "",
+			 summary[0] != 0 ? summary : "(unavailable)\n", file != NULL ? gReportPath : "(the report could not be written)");
 
 	nc_showDialog(body);
 
@@ -570,9 +563,9 @@ static void nc_report(const char *kind, const char *detail)
 	char summary[NC_SUMMARY_MAX];
 	nc_haxeStackSummary(summary, sizeof(summary));
 
-	char body[NC_CONTEXT_MAX + NC_PATH_MAX + NC_SUMMARY_MAX + 512];
-	snprintf(body, sizeof(body), "%s\n\n%s\n\nDoing: %s\n\nHaxe stack:\n%s\nA report was written to:\n%s", kind, detail != NULL ? detail : "",
-			 gContext, summary[0] != 0 ? summary : "(unavailable)\n", file != NULL ? gReportPath : "(the report could not be written)");
+	char body[NC_PATH_MAX + NC_SUMMARY_MAX + 512];
+	snprintf(body, sizeof(body), "%s\n\n%s\n\nHaxe stack:\n%s\nA report was written to:\n%s", kind, detail != NULL ? detail : "",
+			 summary[0] != 0 ? summary : "(unavailable)\n", file != NULL ? gReportPath : "(the report could not be written)");
 
 	nc_showDialog(body);
 
@@ -647,21 +640,6 @@ void NATIVECRASH_Install(const char *logDir, const char *appName)
 #endif
 
 	gInstalled = true;
-}
-
-void NATIVECRASH_SetContext(const char *info)
-{
-	if (info == NULL || info[0] == 0)
-	{
-		strncpy(gContext, "(nothing recorded)", sizeof(gContext) - 1);
-	}
-	else
-	{
-		strncpy(gContext, info, sizeof(gContext) - 1);
-	}
-
-	gContext[sizeof(gContext) - 1] = 0;
-	gContextTime = time(NULL);
 }
 
 void NATIVECRASH_ForceCrash()
