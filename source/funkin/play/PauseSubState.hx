@@ -1306,6 +1306,8 @@ class PauseSubState extends MusicBeatSubState
   {
     state.allowInput = false;
 
+    if (state.pauseMusic != null) state.pauseMusic.fadeOut(0.8, 0);
+
     PlayState.instance.deathCounter = 0;
     var wasStoryMode:Bool = PlayStatePlaylist.isStoryMode;
 
